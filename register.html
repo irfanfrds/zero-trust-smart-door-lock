@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero Trust Smart Door Lock — Register User</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:    #000000;
+    --raise:    #0e0e0e;
+    --raise-2:  #191919;
+    --line:     #232323;
+    --white:    #f5f5f5;
+    --grey:     #8c8c8c;
+    --red:      #e50914;
+    --red-lift: #f6121d;
+    --green:    #46d369;
+
+    --sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -20vh 0 auto 0;
+    height: 100vh; 
+    background: radial-gradient(75% 100% at 50% 0%, rgba(229, 9, 20, .28), transparent 80%); 
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 2rem 2.5rem 6rem;
+  }
+
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: .625rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    letter-spacing: .28em;
+    color: var(--grey);
+  }
+
+  .brand b {
+    color: var(--red);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .18em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .nav-links a {
+    color: var(--grey);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+    padding-bottom: 0.25rem;
+  }
+
+  .nav-links a:hover {
+    color: var(--white);
+  }
+
+  .nav-links a.active {
+    color: var(--white);
+    border-bottom: 2px solid var(--red);
+    font-weight: 600;
+  }
+
+  .hero {
+    padding: 4.5rem 0 3rem;
+    max-width: 44rem;
+  }
+
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: .98;
+    color: var(--white);
+  }
+
+  .hero p {
+    margin: 1.25rem 0 0;
+    font-size: 1.25rem;
+    color: var(--grey);
+    max-width: 32rem;
+  }
+
+  .form-container {
+    max-width: 28rem;
+    margin-top: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--grey);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--white);
+    background: var(--raise-2);
+    border: 1px solid var(--line);
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  .btn-submit {
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--red);
+    border: 1px solid var(--red-lift);
+    border-radius: .25rem;
+    padding: 0.875rem 2rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background .15s ease, border-color .15s ease;
+  }
+
+  .btn-submit:hover {
+    background: var(--red-lift);
+  }
+
+  /* --- Feedback Messages --- */
+  .status-msg {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: none;
+  }
+
+  .status-msg.success {
+    display: block;
+    background: rgba(70, 211, 105, 0.1);
+    color: var(--green);
+    border: 1px solid rgba(70, 211, 105, 0.2);
+  }
+
+  .status-msg.error {
+    display: block;
+    background: rgba(229, 9, 20, 0.1);
+    color: var(--red);
+    border: 1px solid rgba(229, 9, 20, 0.2);
+  }
+
+  /* ---------- user table & lost mode ---------- */
+  .section-title {
+    margin-top: 5rem;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-refresh {
+    font: inherit;
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--raise-2);
+    border: 1px solid var(--line);
+    border-radius: .25rem;
+    padding: .4rem .75rem;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .btn-refresh:hover { background: var(--grey); color: var(--black); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9375rem;
+  }
+
+  thead th {
+    font-size: .6875rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: var(--grey);
+    text-align: left;
+    padding: .875rem .875rem .75rem;
+  }
+
+  tbody td {
+    padding: 1rem .875rem;
+    border-top: 1px solid var(--line);
+    vertical-align: middle;
+  }
+
+  tbody tr { transition: background .15s ease; }
+  tbody tr:hover { background: var(--raise); }
+
+  .name { font-weight: 500; }
+  .uid  { font-family: var(--mono); font-size: .875rem; color: var(--grey); }
+
+  /* Status Badges */
+  .status-active { color: var(--green); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em; }
+  .status-suspended { color: var(--red); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em; }
+
+  /* Action Buttons */
+  .btn-action {
+    font: inherit;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .4rem .75rem;
+    border-radius: .25rem;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .btn-suspend {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+  }
+  .btn-suspend:hover {
+    background: var(--red);
+    color: var(--white);
+  }
+  .btn-activate {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+  .btn-activate:hover {
+    background: var(--green);
+    color: var(--black);
+  }
+
+  @media (max-width: 740px) {
+    thead { display: none; }
+    tbody tr {
+      display: block;
+      padding: 1rem 0 1rem .875rem;
+      border-top: 1px solid var(--line);
+    }
+    tbody td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: .25rem 0;
+      border: 0;
+    }
+    tbody td::before {
+      content: attr(data-label);
+      font-size: .75rem;
+      color: var(--grey);
+      flex: none;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="brand"><b>ZERO TRUST</b> SMART DOOR LOCK</p>
+    <nav class="nav-links">
+      <a href="dashboard.html">Live logs</a>
+      <a href="#" class="active">Register user</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Add a user</h1>
+    <p>Enrol a person's card and mobile token so the lock recognises them at the door.</p>
+  </section>
+
+  <div class="form-container">
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="name">User's Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Irfan" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="card_uid">RFID Card UID</label>
+        <input type="text" id="card_uid" placeholder="e.g. 73E8DD29" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="token_value">Digital Token ID</label>
+        <input type="text" id="token_value" placeholder="e.g. 654215462" required>
+      </div>
+
+      <button type="submit" class="btn-submit">Register new user</button>
+      
+      <div id="statusMessage" class="status-msg"></div>
+    </form>
+  </div>
+
+  <!-- --- NEW LOST MODE SECTION --- -->
+  <div class="section-title">
+    <span>Active Credentials & Lost Mode</span>
+    <button type="button" class="btn-refresh" onclick="fetchUsers()">Refresh List</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th>Card UID</th>
+        <th>Status</th>
+        <th style="text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody id="usersTableBody">
+      <tr><td colspan="4" style="text-align:center; color:var(--grey); padding: 2rem;">Loading users…</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+  // 1. Handle User Registration
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const card_uid = document.getElementById('card_uid').value;
+    const token_value = document.getElementById('token_value').value;
+    const statusEl = document.getElementById('statusMessage');
+    
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, card_uid, token_value })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        statusEl.className = 'status-msg success';
+        statusEl.textContent = result.message || 'User successfully registered!';
+        document.getElementById('registerForm').reset();
+        fetchUsers(); // Refresh the user list automatically
+      } else {
+        statusEl.className = 'status-msg error';
+        statusEl.textContent = result.error || 'Failed to register user.';
+      }
+    } catch (error) {
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Server error. Check that your backend is running.';
+    }
+  });
+
+  // 2. Fetch Users for the Lost Mode Table
+  async function fetchUsers() {
+    try {
+      const response = await fetch('/api/users?nocache=' + Date.now());
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+
+      const users = await response.json();
+      const body = document.getElementById('usersTableBody');
+      body.innerHTML = '';
+
+      if (!Array.isArray(users) || users.length === 0) {
+        body.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--grey); padding: 2rem;">No registered users found.</td></tr>`;
+        return;
+      }
+
+      users.forEach(user => {
+        const isActive = String(user.pairing_status).toLowerCase() === 'active';
+        const row = document.createElement('tr');
+
+        // Name
+        const tdName = document.createElement('td');
+        tdName.dataset.label = 'User Name';
+        tdName.className = 'name';
+        tdName.textContent = user.name;
+        
+        // UID
+        const tdUid = document.createElement('td');
+        tdUid.dataset.label = 'Card UID';
+        tdUid.className = 'uid';
+        tdUid.textContent = user.card_uid;
+
+        // Status Badge
+        const tdStatus = document.createElement('td');
+        tdStatus.dataset.label = 'Status';
+        const statusSpan = document.createElement('span');
+        statusSpan.className = isActive ? 'status-active' : 'status-suspended';
+        statusSpan.textContent = isActive ? 'ACTIVE' : 'SUSPENDED';
+        tdStatus.appendChild(statusSpan);
+
+        // Action Button
+        const tdAction = document.createElement('td');
+        tdAction.dataset.label = 'Action';
+        tdAction.style.textAlign = 'right';
+        const actionBtn = document.createElement('button');
+        actionBtn.type = 'button';
+        
+        if (isActive) {
+            actionBtn.textContent = 'Trigger Lost Mode';
+            actionBtn.className = 'btn-action btn-suspend';
+            actionBtn.onclick = () => toggleLostMode(user.card_uid, 'suspended');
+        } else {
+            actionBtn.textContent = 'Reactivate Access';
+            actionBtn.className = 'btn-action btn-activate';
+            actionBtn.onclick = () => toggleLostMode(user.card_uid, 'active');
+        }
+        
+        tdAction.appendChild(actionBtn);
+
+        row.appendChild(tdName);
+        row.appendChild(tdUid);
+        row.appendChild(tdStatus);
+        row.appendChild(tdAction);
+        body.appendChild(row);
+      });
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  }
+
+  // 3. Handle the Kill Switch click
+  async function toggleLostMode(cardUid, newStatus) {
+    if(newStatus === 'suspended') {
+        if(!confirm(`Are you sure you want to suspend access for card ${cardUid}?`)) return;
+    }
+
+    try {
+      const response = await fetch('/api/toggle-lost-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ card_uid: cardUid, new_status: newStatus })
+      });
+      
+      if (response.ok) {
+        fetchUsers(); 
+      } else {
+        alert("Failed to update status. Check server connection.");
+      }
+    } catch (error) {
+      console.error("Error toggling lost mode:", error);
+    }
+  }
+
+  // --- ZERO TRUST INACTIVITY TIMEOUT ---
+  let securityTimeout;
+
+  function triggerLogout() {
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", window.location.href, true, "expired", "expired");
+      xhr.send();
+      
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+              window.location.reload(); 
+          }
+      };
+  }
+
+  function resetTimer() {
+      clearTimeout(securityTimeout);
+      securityTimeout = setTimeout(triggerLogout, 10000); 
+  }
+
+  // Attach the timer resets to user interaction events and initial load
+  window.addEventListener('load', fetchUsers);
+  window.addEventListener('load', resetTimer);
+  document.addEventListener('mousemove', resetTimer);
+  document.addEventListener('keypress', resetTimer);
+  document.addEventListener('click', resetTimer);
+  document.addEventListener('scroll', resetTimer);
+
+</script>
+</body>
+</html>
