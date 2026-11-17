@@ -23,6 +23,7 @@ An enterprise-grade IoT access control system built to demonstrate **Zero Trust 
 
 ### 📸 System Screenshots
 
+
 #### 1. Web Dashboard Interface
 **Live Access Logs & Intrusion Detection**
 
@@ -43,9 +44,11 @@ An enterprise-grade IoT access control system built to demonstrate **Zero Trust 
 <img width="826" height="548" alt="code reg 2" src="https://github.com/user-attachments/assets/3a56fff8-730c-4d15-8a9d-2dd9a82e89e6" />
 
 
+
 **Credential Management (Active / Lost Mode)**
 
 <img width="678" height="196" alt="lost" src="https://github.com/user-attachments/assets/50784951-53f4-4420-acfb-5d5479cd5ad4" />
+
 
 
 **2. Real-Time Telegram 2FA Alerts**
@@ -54,9 +57,11 @@ An enterprise-grade IoT access control system built to demonstrate **Zero Trust 
 <img width="277" height="475" alt="tele" src="https://github.com/user-attachments/assets/4c08f6e7-1688-408f-995a-53b5b9ff0f6b" />
 
 
+
 *Security Lockdown (Brute Force Attack Detected):*
 
 <img width="315" height="370" alt="brute" src="https://github.com/user-attachments/assets/51d68fb4-fbc3-4340-a6c3-982dc7f4f0ce" />
+
 
 
 **3. Backend Server Status**
